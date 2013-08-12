@@ -1,0 +1,148 @@
+
+
+
+      CS202 Project 3:  Two Dimensional Trees
+
+
+
+
+Fill out the following information and include
+this file with your project submission.
+
+
+Name (from netID used for submission): Chris Dargis
+NetID:
+
+Partner's name (if any):  
+NetID:  
+
+             
+Answer each of the following questions.
+
+/****************************************************    
+* List all of the source files you submitted.
+*   (You must submit TDTree.java and Point.java)
+*****************************************************/
+
+  TDTree.java
+  Point.java
+  TreeNode.java
+  PointComparator.java
+
+/****************************************************    
+* Describe the contents of a node in your implementation
+*****************************************************/
+  A single node consists of a point(x,y), followed by a left node and a right node.
+  Each node also contains a height variable for keeping track of where the height of the node is. 
+  Each node also contains it's cutting dimension, and pointers to it's parent, and pointers to other nodes that represent it's min and max values for it's sub tree.
+
+/****************************************************    
+*    Did you implement the default constructor TDTree()?
+*****************************************************/
+    Yes.
+/****************************************************    
+*    Did you implement size():
+*    If so, is the runtime O(1)?
+*****************************************************/
+    Yes. The runtime is constant becasue it returns an instance variable.
+    The instance variable size is calculated during an insert to the list. It is also decremented after each deletion.
+/****************************************************    
+*    Did you implement height():
+*    If so, is the runtime O(1)?
+*****************************************************/
+    Yes. The runtime is constant becasue it returns an instance variable.
+    The instance variable maxHeight is calculated during an insert to the list.
+/****************************************************    
+*    Did you implement insert(Point p)?
+*    If so, is the runtime O(h) where h is the height
+*       of the tree?  explain as necessary.
+*****************************************************/
+    Yes. Yes the run-time is O(h). This was accomplished by recursively searching for where the node should "live". The algorithm compares the point to where the the method currently is in the tree, and goes left or right based on that comparison.(0.49251856444079367, 0.5185215073070257)
+
+/****************************************************    
+*    Did you implement contains(Point p)?
+*    If so, is the runtime O(h) where h is the height
+*       of the tree?  explain as necessary.
+*****************************************************/
+     Yes. This runs almost exactly the same way as insert().
+
+/****************************************************    
+*    Did you implement 
+*      minX(), maxX(), minY(), maxY()?
+*    If so, are they all O(1)?
+*****************************************************/
+     Yes. This was accomplished by adding data members to TreeNode.java.
+Each node contains a pointer to another node that represents a min or max value.
+
+/****************************************************    
+*    Did you implement printPreOrder()?
+*****************************************************/
+	Yes. It prints recursively.
+
+/****************************************************    
+*    Did you implement delete()?
+*    If so, is the runtime O(h) where h is the height
+*       of the tree?  explain as necessary.
+*****************************************************/
+	Yes. The run-time is within O(h), it is actually likely better than O(h) on average. This was accomplished by adding a "pointer" to each node. The node knows exactly where each min and max value is, so there is no need to search for it. Once the node is replaced with a minX value, the node that was swapped is then recursively deleted.
+/****************************************************    
+*    Did you implement draw()?
+*****************************************************/
+	Yes. the draw() method calls a private drawPoints() method that places each point on the unit square. This was accomplished using the StdDraw class.
+
+
+/****************************************************    
+*    Did you implement nearest(Point p)?
+*    If yes, explain your approach and how you made
+*      as efficient as possible.
+*****************************************************/
+	Yes. This algorithm runs very efficiently. It makes decisions similar to that of insert() and contains(). That is, it traverses through the tree searching for where the point may be inserted. Each point along the way is compared with the Point p, and the closest squared distance is computed.
+
+/****************************************************    
+*    Did you implement the "range" methods rangeSize()
+*        and rangeQuery()?
+*    If yes, explain your approach and how you made
+*      as efficient as possible.
+*****************************************************/
+	Yes. My approach was to use the min and max values that are contained at each node to guage whether or not a subtree may contain a point in the range query. This is accomplished by detecting when two rectangles may or may not overlap.
+    
+/****************************************************    
+*    Did you implement the balanced build-from-array 
+*        Constructor?
+*    If so, is the runtime O(n log n)?
+*    explain
+*****************************************************/
+	Yes. This constructor calls a private method buildBalanced(). The run-time is 0(nlogn). This is accomplished by first sorting x and y separately, and then sending them to the function. The function computes which points belong in which array at each recursive call, but it does so in only one pass over the array that is not used for the cutting dimension.
+    
+/****************************************************    
+*    Did you enforce the incremental size-balanced property?
+*    This affects insert and delete.
+*****************************************************/
+	Yes. I implemented "unbalanced detection". This was accomplished using the formula provided in the write-up. After each insertion or deletion, as the code backs out of the recursion, a method is called that computes the height of a node's subtrees (left and right) and detects if the trees are unbalanced. If the trees are unbalanced, the constructor TDTree(Point[], boolean) is called, where boolean represents the current cutting dimension.
+
+
+/*****************************************************
+* The nearest method and the range methods require "smart"
+*   pruning of the search space to run efficiently,.
+* Did you collect any data to indicate the effectiveness
+*   of your approach?  For example, tracking the number
+*   of nodes touched by the operations (so this number
+*   can be related to the number of nodes in the tree)?
+* If so, discuss some of your findings.
+******************************************************/
+	The "pruning" method I implemented for this functionality was this: "Traverse through the tree as if inserting the point that is being compared. At each node, compute the distance of 'p' to the point contained at that node, if it yields a better distance, return that point." I did track the number of nodes touched on a few cases, here are some results:
+
+With 200 points, computed nearest(.5, .5)
+Output: (0.49251856444079367, 0.5185215073070257)
+	size: 200, nodes touched: 8
+
+With 500 points: computed nearest(.1, .4)
+Output: (0.07440343946527295, 0.41426538118997236)
+	size: 500, nodes touched: 9
+
+With 1000 points: computed nearest(.004, .003)
+Output: (0.04177021256593405, 0.01006058651734898)
+	size: 1000, nodes touched: 10
+
+These results indicate that the "pruning" approach is very effective in practice, although some of these results could be attributed to the fact that my TDTree maintains size-balanced.
+
